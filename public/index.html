@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#f5f8fa">
+<title>Annual leave</title>
+<link rel="stylesheet" href="/assets/style.css">
+<style id="page-size"></style>
+</head>
+<body>
+<main class="screen">
+  <header class="top">
+    <div>
+      <h1>Annual leave</h1>
+      <p class="sub" id="range"></p>
+    </div>
+    <span class="status" id="status" aria-live="polite"></span>
+  </header>
+
+  <section class="tally" id="tally"></section>
+
+  <section class="bar">
+    <div class="brushes" id="brushes" role="radiogroup" aria-label="Mark days as"></div>
+    <div class="seg" id="modes">
+      <button data-mode="year">Year</button><button data-mode="month">Month</button>
+    </div>
+  </section>
+  <p class="hint">Tap a weekday to mark it · tap again for a half day · a third time to clear. Weekends don't count.</p>
+
+  <div class="monthnav" id="monthnav">
+    <button id="prev" aria-label="Previous month">‹</button><strong id="mtitle"></strong><button id="next" aria-label="Next month">›</button>
+  </div>
+  <section class="cal" id="cal"></section>
+
+  <section class="panels">
+    <details class="panel" open>
+      <summary>Time off in lieu</summary>
+      <p class="note">Log extra hours worked or bank holidays worked. Every <b id="hpd"></b> hours add one day to the balance; spend it by marking days with <i>Time off in lieu</i>.</p>
+      <form id="toilForm" class="row">
+        <label>Date <input type="date" name="date" required></label>
+        <label>Hours <input type="number" name="hours" step="0.25" min="0.25" required></label>
+        <label class="grow">Note <input type="text" name="note" placeholder="e.g. Late EEG list"></label>
+        <button type="submit" class="primary">Add</button>
+      </form>
+      <button type="button" id="bhWorked" class="ghost">+ Worked a bank holiday (one full day)</button>
+      <ul class="log" id="toilList"></ul>
+    </details>
+
+    <details class="panel">
+      <summary>Print / save as PDF</summary>
+      <div class="row">
+        <label>Layout
+          <select id="pLayout">
+            <option value="year">Full year on one page</option>
+            <option value="months">Month by month (12 pages)</option>
+            <option value="month">Current month only</option>
+          </select>
+        </label>
+        <label>Orientation
+          <select id="pOrient">
+            <option value="landscape">Landscape</option>
+            <option value="portrait">Portrait</option>
+          </select>
+        </label>
+        <button type="button" id="printBtn" class="primary">Print / PDF</button>
+      </div>
+      <p class="note">In the print dialog choose “Save as PDF”. Turn on “Background graphics” if the colours don't show.</p>
+    </details>
+
+    <details class="panel">
+      <summary>Settings</summary>
+      <div class="row" id="settings">
+        <label>Leave year starts <input type="date" data-k="yearStart"></label>
+        <label>Annual leave days <input type="number" step="0.5" min="0" data-k="allowance"></label>
+        <label>Carried over <input type="number" step="0.5" min="0" data-k="carryOver"></label>
+        <label>Hours per day <input type="number" step="0.25" min="1" data-k="hoursPerDay"></label>
+        <label>Study days / year <input type="number" step="0.5" min="0" data-k="studyAllowance"></label>
+      </div>
+      <div class="row">
+        <button type="button" id="exportBtn" class="ghost">Download backup</button>
+        <label class="ghost file">Restore backup <input type="file" id="importFile" accept="application/json"></label>
+      </div>
+      <p class="note">Everything saves automatically to the server and opens the same on any device with this link. Keep the link private.</p>
+    </details>
+  </section>
+</main>
+
+<section class="print" id="print"></section>
+<script type="module" src="/assets/app.js"></script>
+</body>
+</html>

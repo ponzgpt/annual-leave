@@ -1,0 +1,10 @@
+{
+  "name": "annual-leave",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "check": "node --check server.js && node --check public/app.js && node --test",
+    "dev": "TOKEN=dev-token-0123456789 DATA_DIR=.data PORT=3000 node server.js"
+  }
+}
