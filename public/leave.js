@@ -16,7 +16,7 @@ export const GRAMPIAN_2026_27 = [
 
 export function defaultDoc() {
   return {
-    settings: { yearStart: '2026-04-01', allowance: 33, carryOver: 0, hoursPerDay: 8, studyAllowance: 10 },
+    settings: { name: '', role: '', yearStart: '2026-04-01', allowance: 33, carryOver: 0, hoursPerDay: 8, studyAllowance: 10 },
     days: Object.fromEntries(GRAMPIAN_2026_27.map(d => [d, { t: 'bh' }])),
     toil: [],
     view: { mode: 'year', month: '2026-10', orient: 'landscape', layout: 'year' },

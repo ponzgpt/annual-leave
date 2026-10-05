@@ -72,7 +72,13 @@ function render() {
   const t = tally(doc, today);
   const v = doc.view;
   const [from, to] = t.range;
-  $('#range').textContent = `Leave year ${shortDate(from)} ${from.slice(0, 4)} – ${shortDate(to)} ${to.slice(0, 4)}`;
+  const { name, role } = doc.settings;
+  const long = d => new Date(d + 'T12:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  $('#range').textContent = `Annual leave ${from.slice(0, 4)}/${to.slice(2, 4)}`;
+  $('#dates').textContent = `${long(from)} – ${long(to)}`;
+  $('#name').textContent = name || 'Annual leave';
+  $('#role').textContent = role;
+  document.title = name ? `${name} · Annual leave` : 'Annual leave';
   $('#tally').innerHTML = cards(t);
   $('#brushes').innerHTML = Object.entries(BRUSHES).map(([k, label]) =>
     `<button class="chip ${k}" role="radio" aria-checked="${v.brush === k}" data-b="${k}"><i class="dot"></i>${label}</button>`).join('');
@@ -96,7 +102,7 @@ function printNow() {
   const t = tally(doc, today);
   const { layout, orient } = doc.view;
   $('#page-size').textContent = `@page { size: A4 ${orient}; margin: 10mm; }`;
-  const head = sub => `<div class="phead"><h2>Annual leave ${t.range[0].slice(0, 4)}/${t.range[1].slice(2, 4)}${sub ? ' · ' + sub : ''}</h2>
+  const head = sub => `<div class="phead"><h2>${esc(doc.settings.name ? doc.settings.name + ' · ' : '')}Annual leave ${t.range[0].slice(0, 4)}/${t.range[1].slice(2, 4)}${sub ? ' · ' + sub : ''}</h2>
     <div class="legend">${Object.entries(TYPES).map(([k, l]) => `<span class="${k}"><i class="dot"></i>${l}</span>`).join('')}</div></div>
     <p class="psum">Annual leave ${fmt(t.al.allowance)}: ${fmt(t.al.taken)} taken, ${fmt(t.al.booked)} booked, <b>${fmt(t.al.left)} left</b> ·
     In lieu: ${fmt(t.toil.hours)} h = ${fmt(t.toil.allowance)} d, ${fmt(t.toil.left)} left · Study: ${fmt(t.study.left)} of ${fmt(t.study.allowance)} left ·
@@ -142,13 +148,21 @@ $('#toilList').addEventListener('click', e => {
 
 $('#settings').addEventListener('change', e => {
   const k = e.target.dataset.k;
-  if (!k || !e.target.value) return;
-  doc.settings[k] = k === 'yearStart' ? e.target.value : Number(e.target.value);
+  if (!k) return;
+  const text = k === 'name' || k === 'role';
+  if (!text && !e.target.value) return;
+  doc.settings[k] = text ? e.target.value.trim() : k === 'yearStart' ? e.target.value : Number(e.target.value);
   change();
 });
 $('#pLayout').onchange = e => { doc.view.layout = e.target.value; save(); };
 $('#pOrient').onchange = e => { doc.view.orient = e.target.value; save(); };
-$('#printBtn').onclick = printNow;
+$('#printBtn').onclick = () => { $('#printDlg').close(); printNow(); };
+
+// Banner tools open as native dialogs; tapping the backdrop closes them.
+document.querySelectorAll('[data-open]').forEach(b => { b.onclick = () => $('#' + b.dataset.open).showModal(); });
+document.querySelectorAll('dialog').forEach(d => d.addEventListener('click', e => {
+  if (e.target === d || e.target.closest('[data-close]')) d.close();
+}));
 
 $('#exportBtn').onclick = () => {
   const a = document.createElement('a');
